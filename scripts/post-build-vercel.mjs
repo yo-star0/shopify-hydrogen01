@@ -20,10 +20,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 // ── 1. Validate that the Hydrogen build succeeded ─────────────────────────
-// `shopify hydrogen build` outputs to dist/; `npx vite build` outputs to build/
+// PRIORITY: build/ (from `npx vite build` — client + server share the same
+// Vite manifest so CSS/JS hashes always match) over dist/ (pre-committed
+// local Oxygen build, which embeds stale hashes when client is rebuilt).
 const serverBundleCandidates = [
-  path.join(rootDir, 'dist', 'server', 'index.js'),
   path.join(rootDir, 'build', 'server', 'index.js'),
+  path.join(rootDir, 'dist', 'server', 'index.js'),
 ];
 const serverBundle = serverBundleCandidates.find(p => fs.existsSync(p));
 if (!serverBundle) {
@@ -34,8 +36,8 @@ if (!serverBundle) {
 console.log(`▶ Server bundle found: ${serverBundle}`);
 
 const clientDirCandidates = [
-  path.join(rootDir, 'dist', 'client'),
   path.join(rootDir, 'build', 'client'),
+  path.join(rootDir, 'dist', 'client'),
 ];
 const clientDir = clientDirCandidates.find(p => fs.existsSync(p));
 if (!clientDir) {
@@ -56,7 +58,7 @@ fs.mkdirSync(functionsDir, { recursive: true });
 fs.mkdirSync(staticDir,    { recursive: true });
 
 // ── 3. Copy client assets to static ───────────────────────────────────────
-console.log('▶ Copying static assets from dist/client/ ...');
+console.log(`▶ Copying static assets from ${clientDir} ...`);
 copyDir(clientDir, staticDir);
 
 // ── 4. Create Edge Function entry point ────────────────────────────────────
