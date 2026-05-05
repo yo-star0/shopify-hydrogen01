@@ -23,7 +23,15 @@ export default defineConfig({
      * does export `renderToReadableStream`, compatible with the Web Streams
      * API available in Node.js 18+ and Cloudflare Workers.
      */
-    noExternal: ['react', 'react-dom'],
+    /**
+     * Bundle ONLY react-dom (not react itself).  Bundling react-dom forces
+     * Vite to use the browser variant which exports `renderToReadableStream`.
+     * Keeping react external ensures a single React instance is shared by
+     * both the SSR bundle and @shopify/hydrogen — a dual-instance React
+     * breaks Hydrogen's internal context, leaving `context.storefront` as
+     * undefined in route loaders.
+     */
+    noExternal: ['react-dom'],
     resolve: {
       /**
        * Prefer browser/worker exports so that `react-dom/server` resolves to
