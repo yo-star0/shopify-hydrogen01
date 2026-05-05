@@ -3,13 +3,14 @@ import {createRequestHandler, storefrontRedirect} from '@shopify/hydrogen';
 import {createHydrogenRouterContext} from '~/lib/context';
 
 /**
- * Export a fetch handler in module format.
+ * Export a fetch handler compatible with both Oxygen (Cloudflare Workers)
+ * and Node.js / Vercel deployments.
  */
 export default {
   async fetch(
     request: Request,
     env: Env,
-    executionContext: ExecutionContext,
+    executionContext?: ExecutionContext,
   ): Promise<Response> {
     try {
       const hydrogenContext = await createHydrogenRouterContext(
