@@ -83,6 +83,29 @@ fs.writeFileSync(
   `// Auto-generated Vercel Edge Function wrapper for Hydrogen Oxygen bundle
 import server from ${JSON.stringify(serverBundle)};
 
+// Hydrogen calls caches.open('hydrogen') internally for sub-request caching.
+// Vercel Edge Runtime does NOT expose the Cloudflare CacheStorage global, so
+// we polyfill it with a no-op cache that passes all requests through to the
+// Shopify Storefront API without caching.
+if (typeof globalThis.caches === 'undefined') {
+  globalThis.caches = {
+    open: async function(_name) {
+      return {
+        match: async function(_req) { return undefined; },
+        put: async function(_req, _res) {},
+        delete: async function(_req) { return false; },
+        keys: async function() { return []; },
+      };
+    },
+    default: {
+      match: async function(_req) { return undefined; },
+      put: async function(_req, _res) {},
+      delete: async function(_req) { return false; },
+      keys: async function() { return []; },
+    },
+  };
+}
+
 export default function handler(request, ctx) {
   const env = {
 ${envObject}
