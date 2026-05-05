@@ -32,6 +32,11 @@ export default {
         executionContext,
       );
 
+      // Debug: verify context and env
+      console.log('[DEBUG] effectiveEnv keys:', Object.keys(effectiveEnv).filter(k => k.startsWith('PUBLIC') || k === 'SESSION_SECRET'));
+      console.log('[DEBUG] PUBLIC_STORE_DOMAIN:', effectiveEnv.PUBLIC_STORE_DOMAIN);
+      console.log('[DEBUG] hydrogenContext.storefront:', hydrogenContext.storefront);
+
       /**
        * Create a Hydrogen request handler that internally
        * delegates to React Router for routing and rendering.
