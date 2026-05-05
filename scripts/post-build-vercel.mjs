@@ -83,11 +83,19 @@ fs.writeFileSync(
   `// Auto-generated Vercel Edge Function wrapper for Hydrogen Oxygen bundle
 import server from ${JSON.stringify(serverBundle)};
 
-export default function handler(request) {
+export default function handler(request, ctx) {
   const env = {
 ${envObject}
   };
-  return server.fetch(request, env);
+  // Vercel Edge Runtime provides ctx.waitUntil via the second argument.
+  // Fall back to a no-op so Hydrogen's executionContext.waitUntil() never throws.
+  const executionContext = ctx && typeof ctx.waitUntil === 'function'
+    ? ctx
+    : {
+        waitUntil: function(p) { Promise.resolve(p).catch(function(){}); },
+        passThroughOnException: function() {},
+      };
+  return server.fetch(request, env, executionContext);
 }`,
 );
 
