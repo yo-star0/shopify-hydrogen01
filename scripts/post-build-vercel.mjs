@@ -20,12 +20,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 // ── 1. Validate that the Hydrogen build succeeded ─────────────────────────
-// PRIORITY: build/ (from `npx vite build` — client + server share the same
-// Vite manifest so CSS/JS hashes always match) over dist/ (pre-committed
-// local Oxygen build, which embeds stale hashes when client is rebuilt).
+// dist/ contains the pre-committed Oxygen bundle from `shopify hydrogen build`.
+// Both dist/server/ and dist/client/ are committed from the SAME local build,
+// so their Vite manifest hashes always match. build/ is the fallback for local
+// development workflows that run `npx vite build` directly.
 const serverBundleCandidates = [
-  path.join(rootDir, 'build', 'server', 'index.js'),
   path.join(rootDir, 'dist', 'server', 'index.js'),
+  path.join(rootDir, 'build', 'server', 'index.js'),
 ];
 const serverBundle = serverBundleCandidates.find(p => fs.existsSync(p));
 if (!serverBundle) {
@@ -36,8 +37,8 @@ if (!serverBundle) {
 console.log(`▶ Server bundle found: ${serverBundle}`);
 
 const clientDirCandidates = [
-  path.join(rootDir, 'build', 'client'),
   path.join(rootDir, 'dist', 'client'),
+  path.join(rootDir, 'build', 'client'),
 ];
 const clientDir = clientDirCandidates.find(p => fs.existsSync(p));
 if (!clientDir) {

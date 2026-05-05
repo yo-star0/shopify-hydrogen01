@@ -2,9 +2,13 @@ node_modules
 /.cache
 /build
 /dist
-# Keep the pre-built Oxygen server bundle for Vercel Edge Function deployment
+# Keep the pre-built Hydrogen/Oxygen bundle for Vercel Edge Function deployment.
+# Both dist/server/ and dist/client/ must come from the SAME shopify hydrogen build
+# run so their Vite manifest hashes always match.
 !/dist/server/
 !/dist/server/index.js
+!/dist/client/
+!/dist/client/**
 /public/build
 /.mf
 .env
