@@ -14,6 +14,15 @@ export default defineConfig({
     assetsInlineLimit: 0,
   },
   ssr: {
+    resolve: {
+      /**
+       * Prefer browser/worker exports for SSR so that `react-dom/server`
+       * resolves to the browser variant which exports `renderToReadableStream`.
+       * This is required for Vercel (Node.js 18+) and Cloudflare Workers
+       * deployments alike, both of which support the Web Streams API.
+       */
+      conditions: ['worker', 'browser', 'module', 'import', 'default'],
+    },
     optimizeDeps: {
       /**
        * Include dependencies here if they throw CJS<>ESM errors.

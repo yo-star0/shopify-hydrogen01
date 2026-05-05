@@ -9,13 +9,26 @@ import {createHydrogenRouterContext} from '~/lib/context';
 export default {
   async fetch(
     request: Request,
-    env: Env,
+    env?: Env,
     executionContext?: ExecutionContext,
   ): Promise<Response> {
     try {
+      /**
+       * In Cloudflare Workers / Oxygen, environment variables are passed
+       * as the `env` binding object.  In Node.js / Vercel, they live in
+       * `process.env`.  Merge both so this entry works in either runtime.
+       */
+      const nodeEnv: Record<string, string> =
+        typeof process !== 'undefined'
+          ? (Object.fromEntries(
+              Object.entries(process.env).map(([k, v]) => [k, v ?? '']),
+            ) as Record<string, string>)
+          : {};
+      const effectiveEnv = {...nodeEnv, ...(env ?? {})} as Env;
+
       const hydrogenContext = await createHydrogenRouterContext(
         request,
-        env,
+        effectiveEnv,
         executionContext,
       );
 
