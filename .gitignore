@@ -2,6 +2,9 @@ node_modules
 /.cache
 /build
 /dist
+# Keep the pre-built Oxygen server bundle for Vercel Edge Function deployment
+!/dist/server/
+!/dist/server/index.js
 /public/build
 /.mf
 .env
