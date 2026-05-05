@@ -51,6 +51,7 @@ export default function Homepage() {
       <PriceSection />
       <ClosingSection />
       <FooterIconsSection />
+      <LumSiteFooter />
       <StickyCta />
     </div>
   );
@@ -232,29 +233,9 @@ function SvgSprite() {
 function HeroSection() {
   return (
     <section className="lum-hero" id="hero">
-      <div className="lum-hero-img" aria-hidden="true">
-        <img
-          className="lum-hero-photo"
-          src="/images/hero.png"
-          alt=""
-        />
-        <div className="lum-hero-laurel">
-          <svg className="lum-laurel-svg" aria-hidden="true">
-            <use href="#i-laurel-l" />
-          </svg>
-          <div className="lum-laurel-text-wrap">
-            <span className="lum-laurel-text">累計販売数</span>
-            <span className="lum-laurel-num">50万袋</span>
-            <span className="lum-laurel-text">突破！</span>
-            <span className="lum-laurel-stars">★★★</span>
-          </div>
-          <svg className="lum-laurel-svg" aria-hidden="true">
-            <use href="#i-laurel-r" />
-          </svg>
-        </div>
-      </div>
       <div className="container">
         <div className="lum-hero-inner">
+          {/* Column 1: Text */}
           <div className="lum-hero-text">
             <p className="lum-hero-lead">内側から、キレイをつくる。</p>
             <h1 className="lum-hero-title">
@@ -293,6 +274,29 @@ function HeroSection() {
                 今すぐ試してみる
               </a>
               <p className="lum-hero-note">初回限定 40%OFF</p>
+            </div>
+          </div>
+
+          {/* Column 2: Visual — photo + laurel badge */}
+          <div className="lum-hero-visual" aria-hidden="true">
+            <img
+              className="lum-hero-photo"
+              src="/images/hero.png"
+              alt=""
+            />
+            <div className="lum-hero-laurel">
+              <svg className="lum-laurel-svg" aria-hidden="true">
+                <use href="#i-laurel-l" />
+              </svg>
+              <div className="lum-laurel-text-wrap">
+                <span className="lum-laurel-text">累計販売数</span>
+                <span className="lum-laurel-num">50万袋</span>
+                <span className="lum-laurel-text">突破！</span>
+                <span className="lum-laurel-stars">★★★</span>
+              </div>
+              <svg className="lum-laurel-svg" aria-hidden="true">
+                <use href="#i-laurel-r" />
+              </svg>
             </div>
           </div>
         </div>
@@ -554,11 +558,12 @@ function PriceSection() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div style={{textAlign: 'center', marginTop: '40px'}}>
-          <a href="/products" className="lum-btn large">
+        <div className="lum-price-cta">
+          <a href="/products" className="lum-btn">
+            <span className="lum-price-cta-tag">初回 40%OFF</span>
             今すぐ試してみる
           </a>
+          <p className="lum-price-cta-note">30日間全額返金保証付き ・ 送料無料</p>
         </div>
       </div>
     </section>
@@ -645,6 +650,19 @@ function FooterIconsSection() {
         </ul>
       </div>
     </div>
+  );
+}
+
+/* ==================
+   LP Site Footer
+   ================== */
+function LumSiteFooter() {
+  return (
+    <footer className="lum-site-footer">
+      <div className="container">
+        <p>&copy; 2025 Lumi&egrave;re Beauty Protein. All rights reserved.</p>
+      </div>
+    </footer>
   );
 }
 
