@@ -1,12 +1,12 @@
 /**
  * Vercel Build Output API post-build script for Shopify Hydrogen
  *
- * Runs AFTER `npm run build` (which produces dist/client/ and dist/server/).
+ * Runs AFTER the Vite build (which produces build/client/ + build/server/ or dist/).
  * Packages the Hydrogen Oxygen server bundle as a Vercel Edge Function using
  * the Build Output API so the custom server.ts fetch handler is preserved.
  *
  * Architecture:
- *   dist/server/index.js  (Hydrogen Oxygen bundle, exports { default: { fetch } })
+ *   build/server/index.js or dist/server/index.js  (Hydrogen Oxygen bundle, exports { default: { fetch } })
  *       ↓ wrapped by esbuild JS API
  *   .vercel/output/functions/index.func/index.js  (Vercel Edge Function)
  */
@@ -20,14 +20,30 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 
 // ── 1. Validate that the Hydrogen build succeeded ─────────────────────────
-const serverBundle = path.join(rootDir, 'dist', 'server', 'index.js');
-const clientDir    = path.join(rootDir, 'dist', 'client');
-
-if (!fs.existsSync(serverBundle)) {
-  console.error(`✗ Server bundle not found: ${serverBundle}`);
-  console.error('  Make sure "npm run build" completed successfully.');
+// `shopify hydrogen build` outputs to dist/; `npx vite build` outputs to build/
+const serverBundleCandidates = [
+  path.join(rootDir, 'dist', 'server', 'index.js'),
+  path.join(rootDir, 'build', 'server', 'index.js'),
+];
+const serverBundle = serverBundleCandidates.find(p => fs.existsSync(p));
+if (!serverBundle) {
+  console.error('✗ Server bundle not found in any of:');
+  serverBundleCandidates.forEach(c => console.error('   ' + c));
   process.exit(1);
 }
+console.log(`▶ Server bundle found: ${serverBundle}`);
+
+const clientDirCandidates = [
+  path.join(rootDir, 'dist', 'client'),
+  path.join(rootDir, 'build', 'client'),
+];
+const clientDir = clientDirCandidates.find(p => fs.existsSync(p));
+if (!clientDir) {
+  console.error('✗ Client build dir not found in any of:');
+  clientDirCandidates.forEach(c => console.error('   ' + c));
+  process.exit(1);
+}
+console.log(`▶ Client dir found: ${clientDir}`);
 
 // ── 2. Prepare Vercel output directories ──────────────────────────────────
 const vercelOutput = path.join(rootDir, '.vercel', 'output');
