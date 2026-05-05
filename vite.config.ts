@@ -14,12 +14,20 @@ export default defineConfig({
     assetsInlineLimit: 0,
   },
   ssr: {
+    /**
+     * Bundle react-dom (and react) into the SSR output instead of
+     * externalising them.  When externalised, Node.js resolves
+     * `react-dom/server` with the "node" condition, which does NOT export
+     * `renderToReadableStream`.  Bundling forces Vite to use the
+     * browser/worker variant (set by `resolve.conditions` below) which
+     * does export `renderToReadableStream`, compatible with the Web Streams
+     * API available in Node.js 18+ and Cloudflare Workers.
+     */
+    noExternal: ['react', 'react-dom'],
     resolve: {
       /**
-       * Prefer browser/worker exports for SSR so that `react-dom/server`
-       * resolves to the browser variant which exports `renderToReadableStream`.
-       * This is required for Vercel (Node.js 18+) and Cloudflare Workers
-       * deployments alike, both of which support the Web Streams API.
+       * Prefer browser/worker exports so that `react-dom/server` resolves to
+       * the browser variant which exports `renderToReadableStream`.
        */
       conditions: ['worker', 'browser', 'module', 'import', 'default'],
     },
