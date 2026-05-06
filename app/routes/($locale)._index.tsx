@@ -19,12 +19,17 @@ export async function loader() {
 
 export default function Homepage() {
   // Fade-up IntersectionObserver for .lum-section elements
+  // JS が確認できた時点で will-animate を付与 → opacity:0 で隠す
+  // JS が動かなかった場合はデフォルトで表示されるため、セクションは常に見える
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>('.lum-section');
     if (!('IntersectionObserver' in window)) {
       sections.forEach((el) => el.classList.add('is-visible'));
       return;
     }
+    // JS が動いているのでアニメーション準備
+    sections.forEach((el) => el.classList.add('will-animate'));
+
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -34,7 +39,7 @@ export default function Homepage() {
           }
         });
       },
-      {threshold: 0.1},
+      {threshold: 0.05, rootMargin: '0px 0px 0px 0px'},
     );
     sections.forEach((el) => obs.observe(el));
     return () => obs.disconnect();

@@ -1498,12 +1498,16 @@ body:has(.lum-page) > main {
    Fade-up animation
    ================== */
 .lum-section {
-  opacity: 0;
-  transform: translateY(20px);
   transition: opacity .8s ease, transform .8s ease;
 }
-.lum-section.is-visible { opacity: 1; transform: translateY(0); }
-.lum-hero { opacity: 1; transform: none; }
+.lum-section.will-animate {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.lum-section.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
 
 /* ==================
    Desktop (>=768px)
